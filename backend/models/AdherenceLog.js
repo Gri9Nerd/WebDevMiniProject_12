@@ -11,19 +11,17 @@ const adherenceLogSchema = new mongoose.Schema({
     ref: 'Medication',
     required: true
   },
-  scheduledTime: {
-    type: String,
-    required: true,
-    // Format: "HH:mm"
-    match: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
-  },
   scheduledDate: {
     type: Date,
     required: true
   },
+  scheduledTime: {
+    type: String,
+    required: true
+  },
   status: {
     type: String,
-    enum: ['taken', 'upcoming'],
+    enum: ['taken', 'missed', 'upcoming'],
     default: 'upcoming'
   }
 }, {
@@ -33,4 +31,6 @@ const adherenceLogSchema = new mongoose.Schema({
 // Compound index for efficient querying
 adherenceLogSchema.index({ userId: 1, medicationId: 1, scheduledDate: 1, scheduledTime: 1 }, { unique: true });
 
-module.exports = mongoose.model('AdherenceLog', adherenceLogSchema); 
+const AdherenceLog = mongoose.model('AdherenceLog', adherenceLogSchema);
+
+module.exports = AdherenceLog; 

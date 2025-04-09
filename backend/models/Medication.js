@@ -15,14 +15,23 @@ const medicationSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  schedule: [{
-    type: String,
+  schedule: {
+    type: [String],
     required: true,
-    // Format: "HH:mm"
-    match: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
-  }]
+    default: ['08:00', '20:00']
+  },
+  notes: {
+    type: String,
+    trim: true
+  },
+  reminders: {
+    type: Boolean,
+    default: true
+  }
 }, {
   timestamps: true
 });
 
-module.exports = mongoose.model('Medication', medicationSchema); 
+const Medication = mongoose.model('Medication', medicationSchema);
+
+module.exports = Medication; 

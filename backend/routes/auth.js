@@ -6,7 +6,12 @@ const User = require('../models/User');
 // Register
 router.post('/register', async (req, res) => {
   try {
+    console.log('Register request body:', req.body);
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Please provide both email and password' });
+    }
 
     // Check if user already exists
     let user = await User.findOne({ email });
@@ -21,6 +26,7 @@ router.post('/register', async (req, res) => {
     });
 
     await user.save();
+    console.log('User saved successfully:', user._id);
 
     // Create token
     const token = jwt.sign(
@@ -37,15 +43,23 @@ router.post('/register', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Registration error:', error);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: error.message });
+    }
+    res.status(500).json({ message: 'Server error during registration', error: error.message });
   }
 });
 
 // Login
 router.post('/login', async (req, res) => {
   try {
+    console.log('Login request body:', req.body);
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Please provide both email and password' });
+    }
 
     // Check if user exists
     const user = await User.findOne({ email });
@@ -74,8 +88,8 @@ router.post('/login', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Server error during login', error: error.message });
   }
 });
 
