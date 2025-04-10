@@ -2,13 +2,11 @@ const mongoose = require('mongoose');
 
 const adherenceLogSchema = new mongoose.Schema({
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    type: String,
     required: true
   },
   medicationId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Medication',
+    type: String,
     required: true
   },
   scheduledDate: {

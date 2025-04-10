@@ -1,5 +1,11 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { auth } from '../services/api';
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged 
+} from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 const AuthContext = createContext(null);
 
@@ -8,41 +14,36 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    if (token && userData) {
-      try {
-        setUser(JSON.parse(userData));
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser({
+          id: user.uid,
+          email: user.email
+        });
+      } else {
+        setUser(null);
       }
-    }
-    setLoading(false);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const login = async (email, password) => {
     try {
       console.log('Attempting to login with:', email);
-      const response = await auth.login({ email, password });
-      console.log('Login response:', response);
-      
-      if (response.data && response.data.token && response.data.user) {
-        const { token, user } = response.data;
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
-        setUser(user);
-        return { success: true };
-      } else {
-        throw new Error('Invalid response format from server');
-      }
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      setUser({
+        id: user.uid,
+        email: user.email
+      });
+      return { success: true };
     } catch (error) {
       console.error('Login error:', error);
       return { 
         success: false, 
-        error: error.response?.data?.message || error.message || 'Login failed. Please try again.' 
+        error: error.message || 'Login failed. Please try again.' 
       };
     }
   };
@@ -50,31 +51,29 @@ export const AuthProvider = ({ children }) => {
   const register = async (email, password) => {
     try {
       console.log('Attempting to register with:', email);
-      const response = await auth.register({ email, password });
-      console.log('Register response:', response);
-      
-      if (response.data && response.data.token && response.data.user) {
-        const { token, user } = response.data;
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
-        setUser(user);
-        return { success: true };
-      } else {
-        throw new Error('Invalid response format from server');
-      }
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      setUser({
+        id: user.uid,
+        email: user.email
+      });
+      return { success: true };
     } catch (error) {
       console.error('Registration error:', error);
       return { 
         success: false, 
-        error: error.response?.data?.message || error.message || 'Registration failed. Please try again.' 
+        error: error.message || 'Registration failed. Please try again.' 
       };
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (

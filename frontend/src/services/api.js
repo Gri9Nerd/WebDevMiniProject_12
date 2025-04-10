@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { auth } from '../config/firebase';
 
 const API_URL = 'http://localhost:5000/api';
 
@@ -8,21 +9,29 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 10000, // 10 second timeout
-  withCredentials: true
 });
 
 // Request interceptor
 api.interceptors.request.use(
-  (config) => {
-    console.log(`Making ${config.method.toUpperCase()} request to ${config.url}`);
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+  async (config) => {
+    try {
+      console.log(`Making ${config.method.toUpperCase()} request to ${config.url}`);
+      const user = auth.currentUser;
+      if (user) {
+        const token = await user.getIdToken();
+        config.headers.Authorization = `Bearer ${token}`;
+        console.log('Token added to request');
+      } else {
+        console.warn('No authenticated user found');
+      }
+      return config;
+    } catch (error) {
+      console.error('Error in request interceptor:', error);
+      return Promise.reject(error);
     }
-    return config;
   },
   (error) => {
-    console.error('Request error:', error);
+    console.error('Request interceptor error:', error);
     return Promise.reject(error);
   }
 );
@@ -45,25 +54,38 @@ api.interceptors.response.use(
       });
       
       if (error.response.status === 401) {
-        // Unauthorized - clear token and redirect to login
-        localStorage.removeItem('token');
+        // Unauthorized - redirect to login
+        console.log('Unauthorized, redirecting to login');
         window.location.href = '/login';
       }
       return Promise.reject(error.response.data);
+    } else if (error.code === 'ECONNREFUSED') {
+      // Connection refused - server might be down
+      console.error('Connection refused. Please check if the server is running.');
+      return Promise.reject({ 
+        message: 'Server is not responding. Please try again later.',
+        code: 'SERVER_DOWN'
+      });
     } else if (error.request) {
       // Request made but no response
       console.error('No response received from server');
-      return Promise.reject({ message: 'No response from server. Please check your connection.' });
+      return Promise.reject({ 
+        message: 'No response from server. Please check your connection.',
+        code: 'NO_RESPONSE'
+      });
     } else {
       // Something else went wrong
       console.error('Error setting up request:', error.message);
-      return Promise.reject({ message: 'An unexpected error occurred' });
+      return Promise.reject({ 
+        message: 'An unexpected error occurred',
+        code: 'UNKNOWN_ERROR'
+      });
     }
   }
 );
 
 // Auth API
-export const auth = {
+export const authApi = {
   register: (userData) => {
     console.log('Registering user:', userData.email);
     return api.post('/auth/register', userData);

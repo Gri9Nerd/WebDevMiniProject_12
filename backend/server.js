@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 
@@ -28,7 +29,7 @@ app.use(express.json());
 
 // Log all requests
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   next();
 });
 
@@ -40,7 +41,7 @@ mongoose.connect(process.env.MONGODB_URI)
 })
 .catch(err => {
   console.error('MongoDB connection error:', err);
-  process.exit(1); // Exit if cannot connect to database
+  process.exit(1);
 });
 
 // Handle MongoDB connection errors
@@ -69,9 +70,11 @@ app.use((err, req, res, next) => {
   console.error('Error details:', {
     message: err.message,
     stack: err.stack,
-    name: err.name
+    name: err.name,
+    timestamp: new Date().toISOString()
   });
   res.status(500).json({ 
+    success: false,
     message: 'Something went wrong!',
     error: process.env.NODE_ENV === 'development' ? err.message : undefined
   });
@@ -90,4 +93,13 @@ const server = app.listen(PORT, () => {
     console.error('Server error:', err);
     process.exit(1);
   }
+});
+
+// Handle process termination
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received. Shutting down gracefully...');
+  server.close(() => {
+    console.log('Process terminated');
+    process.exit(0);
+  });
 }); 

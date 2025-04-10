@@ -169,32 +169,104 @@ router.get('/stats', authMiddleware, async (req, res) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
+    // Get all scheduled medications for today
+    const todaySchedule = [];
+    for (const med of medications) {
+      for (const time of med.schedule) {
+        todaySchedule.push({
+          medicationId: med._id,
+          scheduledTime: time
+        });
+      }
+    }
+    
+    // Get today's logs
     const todayLogs = await AdherenceLog.find({
       userId: req.user.userId,
       scheduledDate: today
     });
     
+    // Calculate today's statistics
     const takenToday = todayLogs.filter(log => log.status === 'taken').length;
-    const upcomingToday = todayLogs.filter(log => log.status === 'upcoming').length;
+    const missedToday = todayLogs.filter(log => log.status === 'missed').length;
+    const upcomingToday = todaySchedule.length - takenToday - missedToday;
     
     // Calculate adherence rate (last 7 days)
     const sevenDaysAgo = new Date();
+    sevenDaysAgo.setHours(0, 0, 0, 0);
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     
+    // Get all scheduled medications for the last 7 days
+    const sevenDaySchedule = [];
+    for (const med of medications) {
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(sevenDaysAgo);
+        date.setDate(date.getDate() + i);
+        for (const time of med.schedule) {
+          sevenDaySchedule.push({
+            medicationId: med._id,
+            scheduledDate: date,
+            scheduledTime: time
+          });
+        }
+      }
+    }
+    
+    // Get logs for the last 7 days
     const logs = await AdherenceLog.find({
       userId: req.user.userId,
       scheduledDate: { $gte: sevenDaysAgo }
     });
     
-    const totalScheduled = logs.length;
+    // Calculate 7-day statistics
+    const totalScheduled = sevenDaySchedule.length;
     const totalTaken = logs.filter(log => log.status === 'taken').length;
-    const adherenceRate = totalScheduled > 0 ? Math.round((totalTaken / totalScheduled) * 100) : 0;
+    const totalMissed = logs.filter(log => log.status === 'missed').length;
+    const totalUpcoming = totalScheduled - totalTaken - totalMissed;
+    
+    // Calculate adherence rate (only count taken vs missed, not upcoming)
+    const adherenceRate = (totalTaken + totalMissed) > 0 
+      ? Math.round((totalTaken / (totalTaken + totalMissed)) * 100) 
+      : 0;
+    
+    // Calculate daily adherence rates
+    const dailyRates = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(sevenDaysAgo);
+      date.setDate(date.getDate() + i);
+      
+      const dayLogs = logs.filter(log => 
+        log.scheduledDate.getTime() === date.getTime()
+      );
+      
+      const dayTaken = dayLogs.filter(log => log.status === 'taken').length;
+      const dayMissed = dayLogs.filter(log => log.status === 'missed').length;
+      
+      const dayRate = (dayTaken + dayMissed) > 0
+        ? Math.round((dayTaken / (dayTaken + dayMissed)) * 100)
+        : 0;
+      
+      dailyRates.push({
+        date: date.toISOString().split('T')[0],
+        rate: dayRate
+      });
+    }
     
     res.json({
       totalMedications,
-      takenToday,
-      upcomingToday,
-      adherenceRate
+      today: {
+        taken: takenToday,
+        missed: missedToday,
+        upcoming: upcomingToday
+      },
+      last7Days: {
+        totalScheduled,
+        totalTaken,
+        totalMissed,
+        totalUpcoming,
+        adherenceRate
+      },
+      dailyRates
     });
   } catch (error) {
     console.error(error);
