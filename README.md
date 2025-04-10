@@ -3,6 +3,80 @@
 ## Project Overview
 MediTrack is a comprehensive medication management system designed to help users track their medications, set reminders, and monitor their adherence to prescribed schedules. The application provides a user-friendly interface for managing medications, viewing schedules, and tracking medication history.
 
+## How It Works
+
+### For Users
+MediTrack helps users manage their medications effectively through the following features:
+
+1. **User Registration and Login**
+   - Secure sign-up process with email verification
+   - Easy login with email and password
+   - Password recovery option for forgotten passwords
+   - Session management for continuous access
+
+2. **Medication Management**
+   - Add new medications with details like:
+     - Medication name
+     - Dosage information
+     - Schedule (multiple times per day)
+     - Additional notes
+     - Reminder preferences
+   - Edit existing medication details
+   - Delete medications when no longer needed
+   - View complete medication history
+
+3. **Daily Medication Tracking**
+   - View today's medication schedule
+   - Mark medications as taken with one click
+   - Track missed doses
+   - View upcoming medications for the day
+   - Get visual indicators for medication status (taken, upcoming, missed)
+
+4. **Dashboard Features**
+   - Overview of all medications
+   - Statistics showing:
+     - Total medications
+     - Medications taken today
+     - Upcoming medications
+     - Adherence rate
+   - Visual progress indicators
+   - Quick access to most important actions
+
+5. **Schedule Management**
+   - Set multiple daily schedules for each medication
+   - View weekly medication calendar
+   - Get reminders for upcoming doses
+   - Track adherence to schedule
+   - View medication history by date
+
+6. **Profile and Settings**
+   - Customize user profile
+   - Set notification preferences
+   - Choose between light and dark themes
+   - Manage account settings
+   - Update personal information
+
+### For Healthcare
+MediTrack also serves as a valuable tool for healthcare management:
+
+1. **Adherence Tracking**
+   - Monitor medication compliance
+   - Track missed doses
+   - Generate adherence reports
+   - Identify patterns in medication taking
+
+2. **Health Insights**
+   - View medication history
+   - Track progress over time
+   - Identify potential issues
+   - Share data with healthcare providers
+
+3. **Safety Features**
+   - Medication interaction warnings
+   - Dosage tracking
+   - Schedule management
+   - Reminder system
+
 ## Tech Stack
 
 ### Frontend
