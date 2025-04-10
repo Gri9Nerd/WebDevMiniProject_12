@@ -1,155 +1,162 @@
-# Medication Management System
+# MediTrack - Medication Management System
 
-A modern, secure, and user-friendly medication management system built with React, Node.js, and MongoDB. This application helps users track their medications, set reminders, and manage their health records efficiently.
+## Project Overview
+MediTrack is a comprehensive medication management system designed to help users track their medications, set reminders, and monitor their adherence to prescribed schedules. The application provides a user-friendly interface for managing medications, viewing schedules, and tracking medication history.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![React](https://img.shields.io/badge/React-18.2.0-61DAFB)
-![Node.js](https://img.shields.io/badge/Node.js-18.x-339933)
-![MongoDB](https://img.shields.io/badge/MongoDB-6.0-47A248)
+## Tech Stack
 
-## 🌟 Features
+### Frontend
+- **React.js** - Frontend framework for building user interfaces
+- **Material-UI (MUI)** - UI component library for modern and responsive design
+- **Firebase Authentication** - User authentication and authorization
+- **Context API** - State management
+- **React Router** - Client-side routing
+- **Axios** - HTTP client for API requests
 
-- **User Authentication**
-  - Secure login and registration
-  - JWT-based authentication
-  - Password encryption
+### Backend
+- **Node.js** - JavaScript runtime environment
+- **Express.js** - Web application framework
+- **MongoDB** - NoSQL database for storing medication and user data
+- **Mongoose** - MongoDB object modeling for Node.js
+- **Firebase Admin SDK** - Backend integration with Firebase services
 
-- **Medication Management**
-  - Add, edit, and delete medications
-  - Track medication schedules
-  - Set reminders and notifications
-  - View medication history
+### Database
+- **MongoDB Atlas** - Cloud-hosted MongoDB database
+- **Firebase Realtime Database** - Real-time data synchronization
 
-- **Dashboard**
-  - Overview of current medications
-  - Upcoming medication schedule
-  - Health statistics and insights
+## Features
 
-- **Modern UI/UX**
-  - Responsive design
-  - Material-UI components
-  - Dark/Light mode support
-  - Intuitive navigation
+### User Authentication
+- Secure login and registration
+- Password reset functionality
+- Session management
+- Protected routes
 
-## 🚀 Getting Started
+### Medication Management
+- Add, edit, and delete medications
+- Set medication schedules
+- Track medication adherence
+- View medication history
+- Set reminders and notifications
+
+### Dashboard
+- Overview of medication schedule
+- Statistics and adherence tracking
+- Upcoming medications
+- Daily medication summary
+
+### Profile Management
+- User profile customization
+- Settings and preferences
+- Theme customization (light/dark mode)
+
+## Project Structure
+```
+meditrack/
+├── frontend/                 # React frontend application
+│   ├── public/              # Static files
+│   └── src/                 # Source code
+│       ├── components/      # Reusable UI components
+│       ├── context/         # Context providers
+│       ├── pages/           # Page components
+│       ├── services/        # API services
+│       └── App.jsx          # Main application component
+│
+└── backend/                 # Node.js backend application
+    ├── models/             # MongoDB models
+    ├── routes/             # API routes
+    ├── middleware/         # Custom middleware
+    └── server.js           # Server entry point
+```
+
+## Getting Started
 
 ### Prerequisites
-
-- Node.js (v18 or higher)
-- MongoDB (v6.0 or higher)
-- npm or yarn
+- Node.js (v14 or higher)
+- MongoDB Atlas account
+- Firebase project
+- Git
 
 ### Installation
 
-1. Clone the repository
+1. Clone the repository:
 ```bash
 git clone https://github.com/Gri9Nerd/WebDevMiniProject_12.git
 cd WebDevMiniProject_12
 ```
 
-2. Install backend dependencies
+2. Install frontend dependencies:
 ```bash
-cd backend
+cd frontend
 npm install
 ```
 
-3. Install frontend dependencies
+3. Install backend dependencies:
 ```bash
-cd ../frontend
+cd ../backend
 npm install
 ```
 
-4. Set up environment variables
-Create a `.env` file in the backend directory with the following variables:
-```env
-PORT=5000
-MONGODB_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-```
+4. Configure environment variables:
+   - Create `.env` file in backend directory
+   - Add Firebase service account key
+   - Configure MongoDB connection string
 
-### Running the Application
-
-1. Start the backend server
+5. Start the development servers:
 ```bash
+# Start backend server
 cd backend
-npm run dev
-```
+npm start
 
-2. Start the frontend development server
-```bash
+# Start frontend server
 cd frontend
 npm run dev
 ```
 
-The application will be available at:
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:5000
+## API Endpoints
 
-## 🛠️ Built With
+### Authentication
+- `POST /auth/register` - User registration
+- `POST /auth/login` - User login
+- `POST /auth/forgot-password` - Password reset request
 
-- **Frontend**
-  - React 18
-  - Material-UI
-  - React Router
-  - Axios
-  - Vite
+### Medications
+- `GET /medications` - Get all medications
+- `POST /medications` - Add new medication
+- `PUT /medications/:id` - Update medication
+- `DELETE /medications/:id` - Delete medication
+- `POST /medications/mark-taken` - Mark medication as taken
+- `GET /medications/today` - Get today's schedule
+- `GET /medications/stats` - Get medication statistics
 
-- **Backend**
-  - Node.js
-  - Express.js
-  - MongoDB
-  - Mongoose
-  - JWT Authentication
-
-## 📝 API Documentation
-
-The API documentation is available at `/api-docs` when running the server.
-
-### Main Endpoints
-
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - User login
-- `GET /api/medications` - Get user's medications
-- `POST /api/medications` - Add a new medication
-- `PUT /api/medications/:id` - Update a medication
-- `DELETE /api/medications/:id` - Delete a medication
-
-## 🔒 Security Features
-
+## Security Features
 - JWT-based authentication
-- Password hashing with bcrypt
-- Protected routes
+- Password hashing
 - Input validation
-- XSS protection
-- CORS enabled
+- CORS protection
+- Rate limiting
+- Error handling middleware
 
-## 🎨 UI Components
+## Future Enhancements
+- Push notifications for medication reminders
+- Medication interaction checker
+- Prescription scanning
+- Family member medication management
+- Export medication history
+- Mobile application
 
-The application uses a custom theme with:
-- Modern color palette
-- Responsive typography
-- Custom component styling
-- Consistent spacing and layout
-- Accessibility features
-
-## 🤝 Contributing
-
+## Contributing
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👥 Authors
-
-- Your Name - Initial work
-
-## 🙏 Acknowledgments
-
+## Acknowledgments
 - Material-UI for the component library
-- MongoDB for the database
-- The React community for excellent documentation and tools
+- Firebase for authentication services
+- MongoDB for database services
+- Express.js for the backend framework
