@@ -129,7 +129,7 @@ export default function DashboardPage() {
               Total Medications
             </Typography>
             <Typography variant="h3" component="div">
-              {stats.totalMedications}
+              {stats.totalMedications || 0}
             </Typography>
           </Paper>
         </Grid>
@@ -148,7 +148,7 @@ export default function DashboardPage() {
               Taken Today
             </Typography>
             <Typography variant="h3" component="div">
-              {stats.takenToday}
+              {stats.takenToday || 0}
             </Typography>
           </Paper>
         </Grid>
@@ -167,7 +167,7 @@ export default function DashboardPage() {
               Upcoming Today
             </Typography>
             <Typography variant="h3" component="div">
-              {stats.upcomingToday}
+              {stats.upcomingToday || 0}
             </Typography>
           </Paper>
         </Grid>
@@ -186,7 +186,7 @@ export default function DashboardPage() {
               Adherence Rate
             </Typography>
             <Typography variant="h3" component="div">
-              {stats.adherenceRate}%
+              {(stats.adherenceRate || 0).toFixed(0)}%
             </Typography>
           </Paper>
         </Grid>

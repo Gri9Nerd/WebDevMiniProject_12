@@ -56,6 +56,7 @@ api.interceptors.response.use(
       if (error.response.status === 401) {
         // Unauthorized - redirect to login
         console.log('Unauthorized, redirecting to login');
+        localStorage.removeItem('token');
         window.location.href = '/login';
       }
       return Promise.reject(error.response.data);
@@ -94,11 +95,13 @@ export const authApi = {
     console.log('Logging in user:', credentials.email);
     return api.post('/auth/login', credentials);
   },
+  getProfile: () => api.get('/auth/profile'),
 };
 
 // Medications API
 export const medications = {
   getAll: () => api.get('/medications'),
+  getById: (id) => api.get(`/medications/${id}`),
   add: (medication) => api.post('/medications', medication),
   update: (id, medication) => {
     if (!id) {
@@ -113,11 +116,11 @@ export const medications = {
     return api.delete(`/medications/${id}`);
   },
   getTodaySchedule: () => api.get('/medications/today'),
-  markTaken: (medicationId, scheduledTime) => {
-    if (!medicationId) {
-      return Promise.reject({ message: 'Medication ID is required to mark as taken' });
+  markTaken: (id, scheduledTime) => {
+    if (!id) {
+      return Promise.reject({ message: 'Medication ID is required for marking as taken' });
     }
-    return api.post('/medications/mark-taken', { medicationId, scheduledTime });
+    return api.post('/medications/mark-taken', { medicationId: id, scheduledTime });
   },
   getStats: () => api.get('/medications/stats'),
 };
